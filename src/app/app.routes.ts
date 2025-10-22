@@ -1,3 +1,8 @@
 import { Routes } from '@angular/router';
-
-export const routes: Routes = [];
+import { RssFeeds } from './rss-feeds/rss-feeds';
+export const routes: Routes = [
+  {
+    path: 'rss',
+    component: RssFeeds
+  }
+];

@@ -1,0 +1,23 @@
+mat-grid-tile {
+  color: "white";
+  background-color: "blue";
+}
+
+.topNavContainer {
+  background-color: red;
+  width: 100vw;
+  mat-icon {
+    background-color: white;
+    padding: 5px;
+    margin: 5px;
+  }
+  mat-icon:hover {
+    border: 5px;
+    border-color: blue;
+  }
+}
+
+.content-container {
+ padding: 20px;
+ overflow: scroll;
+}

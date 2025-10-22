@@ -1,0 +1,18 @@
+
+<mat-sidenav-container>
+  <mat-sidenav mode="side" [(opened)]="sidenavToggleState">
+  Sidenav
+  </mat-sidenav>
+  <mat-sidenav-content >
+    <div class="topNavContainer">
+      <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
+    </div>
+    <mat-grid-list cols="4" rowHeight="100px" >
+      @for (eachFeed of feeds; track eachFeed.guid) {
+      <mat-grid-tile [colspan]="4" [rowspan]="5">
+        <div class="content-container" [innerHtml]="eachFeed.content"></div>
+      </mat-grid-tile>
+      }
+    </mat-grid-list>
+  </mat-sidenav-content>
+</mat-sidenav-container>
