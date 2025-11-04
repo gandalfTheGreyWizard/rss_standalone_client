@@ -8,9 +8,9 @@
       <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
     </div>
     <mat-grid-list cols="4" rowHeight="100px" >
-      @for (eachFeed of feeds; track eachFeed.guid) {
+      @for (eachFeed of feeds; track eachFeed['id']) {
       <mat-grid-tile [colspan]="4" [rowspan]="5">
-        <div class="content-container" [innerHtml]="eachFeed.content"></div>
+        <div class="content-container" [innerHtml]="eachFeed['content']"></div>
       </mat-grid-tile>
       }
     </mat-grid-list>

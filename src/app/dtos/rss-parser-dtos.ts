@@ -17,6 +17,16 @@ export interface CustomDict {
   $: {[key: string]: string};
 }
 
+export interface RssFeedInterface {
+  author?: string;
+  content?: string;
+  title?: string;
+  id?: string;
+  isoDate?: Date;
+  link?: string,
+  pubDate?: Date;
+}
+
 export interface UnitInterface {
-  [key: string]: [CustomDict | string]
+  [key: string]: CustomDict | string;
 }

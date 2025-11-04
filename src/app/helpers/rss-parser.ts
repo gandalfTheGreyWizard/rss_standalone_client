@@ -1,52 +1,36 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import  { parseString } from 'xml2js';
 import { UnitInterface, GenericInterface} from '../dtos/rss-parser-dtos';
+import { RssFeedInterface } from '../dtos/rss-parser-dtos';
+import { CustomParsers } from './custom-parsers';
 import Parser from 'rss-parser';
+import { firstValueFrom } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
 export class RssParser {
   private http = inject(HttpClient);
+  private customParserService = inject(CustomParsers);
+  private rssParser = new Parser();
+
   async getData(url: string) {
     try {
-      const responseFeedsArr: GenericInterface[] = [];
-      const data = await this.http.get(url, { responseType: 'text'}).subscribe((data) => {
-        parseString(data, (err, result) => {
-          result['feed']['entry'].forEach((eachEntry: UnitInterface, index: number) => {
-            let tempResponseDict: GenericInterface = {}
-            tempResponseDict['guid'] = index.toString();
-            tempResponseDict['content'] = this.handleStringResponse('content', eachEntry);
-            tempResponseDict['title'] = this.handleStringResponse('title', eachEntry);
-            //tempResponseDict['category'] = this.handleStringResponse('category', eachEntry);
-            //tempResponseDict['thumb'] = this.handleStringResponse('media:thumbnail', eachEntry);
-            responseFeedsArr.push(tempResponseDict);
-          });
-        });
-      });
-      //const parser = new Parser({
-        //headers: { 'User-Agent': 'curl/7.64.1' }
-      //});
-      //const feeds = await parser.parseURL('https://www.reddit.com/r/brot.rss');
-      //console.log('feeds response', feeds);
-      //return feeds.items.map((each_feed) => {
-        //return each_feed;
-      //});
-      console.log('responding with', responseFeedsArr);
-      return responseFeedsArr;
+      const rssRawText = await firstValueFrom(this.http.get(url, { responseType: 'text' }))
+      const parsedFeed = await this.rssParser.parseString(rssRawText);
+      return parsedFeed['items'];
     } catch(err) {
-      console.log(err);
+      console.error(err);
       return [];
     }
   }
   handleStringResponse(refKey: string, refDict: UnitInterface): string | GenericInterface {
-    if (typeof(refDict[refKey][0]) == 'string') {
-      return refDict[refKey][0];
-    } else if(typeof(refDict[refKey][0]._) == 'string') {
-      return refDict[refKey][0]._.toString();
+    if (typeof(refDict[refKey]) == 'string') {
+      return refDict[refKey];
+    } else if (typeof(refDict[refKey]._) == 'string') {
+      return refDict[refKey]._;
     } else {
-      console.log(refDict[refKey][0].$);
-      return refDict[refKey][0].$;
+      return '';
     }
   }
 }
