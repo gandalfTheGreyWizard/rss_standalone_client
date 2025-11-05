@@ -28,13 +28,19 @@ export class RssFeeds implements OnInit {
   sidenavToggleState: boolean = true;
   navigationIcon='close';
 
+  // random feed sources
+  feedSources = [
+    { name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
+    { name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
+    { name: 'hackernews', url: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
+  ]
 
   //news
-  feedSources = [
-    { name: 'new york times', url: 'https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml' },
-    { name: 'cnbc', url: 'https://www.cnbc.com/id/100727362/device/rss/rss.html' },
-    { name: 'nbcnews', url: 'https://feeds.nbcnews.com/nbcnews/public/news' },
-  ];
+  //feedSources = [
+    //{ name: 'new york times', url: 'https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml' },
+    //{ name: 'cnbc', url: 'https://www.cnbc.com/id/100727362/device/rss/rss.html' },
+    //{ name: 'nbcnews', url: 'https://feeds.nbcnews.com/nbcnews/public/news' },
+  //];
 
   //reddit
   //feedSources = [
@@ -49,15 +55,15 @@ export class RssFeeds implements OnInit {
     const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
       return await this.rssParser.getData((eachFeedSourceObject.url));
     }));
-    feedsMasterArr.forEach((eachFeedsArr) => {
+    feedsMasterArr.forEach((eachFeedsArr, index_first) => {
       //this.feeds = _.intersection(this.feeds, eachFeedsArr);
-      eachFeedsArr.forEach((eachFeed, index) => {
+      eachFeedsArr.forEach((eachFeed, index_second) => {
         if (eachFeed['guid']) {
           eachFeed['id'] = eachFeed['guid'];
         } else if (eachFeed['id']) {
           console.log('id exists');
         } else {
-          eachFeed['id'] = index;
+          eachFeed['id'] = `${index_first}-${index_second}`;
         }
         console.log(eachFeed);
         this.feeds.push(eachFeed);

@@ -1,17 +1,25 @@
-
+<div class="topNavContainer">
+  <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
+</div>
 <mat-sidenav-container>
   <mat-sidenav mode="side" [(opened)]="sidenavToggleState">
-  Sidenav
+    Sidenav
   </mat-sidenav>
-  <mat-sidenav-content >
-    <div class="topNavContainer">
-      <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
-    </div>
+  <mat-sidenav-content>
     <mat-grid-list cols="4" rowHeight="100px" >
       @for (eachFeed of feeds; track eachFeed['id']) {
-      <mat-grid-tile [colspan]="4" [rowspan]="5">
-        <div class="content-container" [innerHtml]="eachFeed['content']"></div>
-      </mat-grid-tile>
+          <mat-grid-tile [colspan]="4" [rowspan]="1"></mat-grid-tile>
+          <mat-grid-tile [colspan]="4" [rowspan]="4" class="contentContainer">
+            <div class="content">
+              <p>{{eachFeed['title']}}</p>
+              <div [innerHtml]="eachFeed['content']"></div>
+            </div>
+          </mat-grid-tile>
+          @if (eachFeed['content:encoded']) {
+            <mat-grid-tile [colspan]="4" [rowspan]="6" class="extendedContentContainer">
+                <div [innerHtml]="eachFeed['content:encoded']" class="extendedContent"></div>
+            </mat-grid-tile>
+          }
       }
     </mat-grid-list>
   </mat-sidenav-content>

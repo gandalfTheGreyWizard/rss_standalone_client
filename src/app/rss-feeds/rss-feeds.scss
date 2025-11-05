@@ -2,10 +2,16 @@ mat-grid-tile {
   color: "white";
   background-color: "blue";
 }
+mat-sidenav-content {
+  padding: 10px;
+}
+mat-sidenav {
+  background-color: #FFC50F;
+}
 
 .topNavContainer {
   background-color: red;
-  width: 100vw;
+  width: 100%;
   mat-icon {
     background-color: white;
     padding: 5px;
@@ -17,7 +23,43 @@ mat-grid-tile {
   }
 }
 
-.content-container {
- padding: 20px;
- overflow: scroll;
+.contentContainer {
+  background-color: #FDE7B3;
+  border: 2px solid grey;
+}
+
+.contentContainer:hover {
+  border: 2px solid black;
+}
+
+.content {
+  overflow: auto;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 10px;
+  padding: 20px;
+}
+
+.extendedContent {
+  overflow: auto;
+  background-color: #63A361;
+  padding: 20px;
+  margin: 20px;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.extendedContentContainer {
+  background-color: #63A361;
+  border: 2px solid grey;
+}
+
+.extendedContentContainer:hover {
+  border: 2px solid black;
+}
+
+
+.feedContainer {
+  margin: 10px;
+  border: 2px solid grey;
 }

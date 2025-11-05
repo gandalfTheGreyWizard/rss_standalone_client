@@ -16,10 +16,12 @@ export class RssParser {
 
   async getData(url: string) {
     try {
-      const rssRawText = await firstValueFrom(this.http.get(url, { responseType: 'text' }))
+      const requestHeaders = { 'Access-Control-Allow-Origin': '*' };
+      const rssRawText = await firstValueFrom(this.http.get(url, { responseType: 'text' }));
       const parsedFeed = await this.rssParser.parseString(rssRawText);
       return parsedFeed['items'];
     } catch(err) {
+      console.log(`error for url ${url}`);
       console.error(err);
       return [];
     }
