@@ -1,12 +1,20 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { RssParser } from '../helpers/rss-parser';
+import * as _ from 'lodash';
+
+//material components imports
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatSidenav, MatSidenavContent, MatSidenavContainer } from '@angular/material/sidenav';
 import { RssFeedInterface } from '../dtos/rss-parser-dtos';
 import { MatIcon } from '@angular/material/icon';
 import { GenericInterface } from '../dtos/rss-parser-dtos';
-import * as _ from 'lodash';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+//component imports
+import { SidenavContainer } from '../components/sidenav-container/sidenav-container';
+import { ModalContainer } from '../components/modal-container/modal-container';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-rss-feeds',
@@ -17,22 +25,26 @@ import * as _ from 'lodash';
     MatSidenav,
     MatSidenavContent,
     MatSidenavContainer,
-    MatIcon
+    MatIcon,
+    SidenavContainer,
+    ModalContainer,
   ],
   templateUrl: './rss-feeds.html',
   styleUrl: './rss-feeds.scss'
 })
 
 export class RssFeeds implements OnInit {
+  private dialog = inject(MatDialog);
   feeds: GenericInterface[] = [];
   sidenavToggleState: boolean = true;
   navigationIcon='close';
+  masterIndexCount: number = 0;
 
   // random feed sources
   feedSources = [
-    { name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
-    { name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
     { name: 'hackernews', url: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
+    //{ name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
+    //{ name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
   ]
 
   //news
@@ -53,22 +65,58 @@ export class RssFeeds implements OnInit {
   async ngOnInit() {
     console.log('init');
     const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
-      return await this.rssParser.getData((eachFeedSourceObject.url));
+      try {
+        return await this.rssParser.getData((eachFeedSourceObject.url));
+      } catch(error) {
+        return [];
+      }
     }));
-    feedsMasterArr.forEach((eachFeedsArr, index_first) => {
-      //this.feeds = _.intersection(this.feeds, eachFeedsArr);
-      eachFeedsArr.forEach((eachFeed, index_second) => {
+    feedsMasterArr.forEach(async (eachFeedsArr, index_first) => {
+      const idSortedFeeds = this.insertIds(eachFeedsArr as [GenericInterface]);
+      eachFeedsArr.forEach((eachFeed) => {
+        this.feeds.push(eachFeed);
+      });
+    });
+  }
+
+  async insertIds(feedsArr: [GenericInterface]) {
+    return await Promise.all(feedsArr.map((eachFeed) => {
         if (eachFeed['guid']) {
           eachFeed['id'] = eachFeed['guid'];
         } else if (eachFeed['id']) {
           console.log('id exists');
         } else {
-          eachFeed['id'] = `${index_first}-${index_second}`;
+          eachFeed['id'] = `${this.masterIndexCount}`;
+          this.masterIndexCount += 1;
         }
+        return eachFeed;
         console.log(eachFeed);
-        this.feeds.push(eachFeed);
+    }));
+  }
+
+  async addToFeeds(url: string) {
+    try {
+      console.log('url in add to feeds function', url);
+      const newFeedsArr = await this.rssParser.getData(url);
+      const idSortedFeeds = await this.insertIds(newFeedsArr as [GenericInterface]);
+      this.feeds = _.union(this.feeds, idSortedFeeds);
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  async triggerAddTargetModal() {
+    console.log("trigger modal");
+    this.dialog.open(ModalContainer, {
+      id: '1234',
+      data: '',
+      width: '50vw',
+      enterAnimationDuration: 300,
+      exitAnimationDuration: 300
+    }).afterOpened().subscribe(() => {
+      this.dialog.getDialogById('1234')?.afterClosed().subscribe((data) => {
+        this.addToFeeds(data.rssUrl);
       });
-      //this.feeds = _.intersection(this.feeds, eachFeedsArr['items']);
     });
   }
 
@@ -86,6 +134,15 @@ export class RssFeeds implements OnInit {
       this.navigationIcon = 'menu';
     } else {
       this.navigationIcon = 'close';
+    }
+  }
+
+  async parserValueAdded(parserAddedForm: FormGroup) {
+    console.log('from parent ', parserAddedForm.value.rssUrl);
+    try {
+      await this.addToFeeds(parserAddedForm.value.rssUrl);
+    } catch(err) {
+      console.error(err);
     }
   }
 }

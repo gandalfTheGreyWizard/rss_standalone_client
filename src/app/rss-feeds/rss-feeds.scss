@@ -1,3 +1,10 @@
+//variable definitions
+
+$navBarColor: #313647;
+$sideNavColor: #435663;
+$contentContainerColor: #FFF8D4;
+$exntendedContentContainerColor: #A3B087;
+
 mat-grid-tile {
   color: "white";
   background-color: "blue";
@@ -6,11 +13,11 @@ mat-sidenav-content {
   padding: 10px;
 }
 mat-sidenav {
-  background-color: #FFC50F;
+  background-color: $sideNavColor;
 }
 
 .topNavContainer {
-  background-color: red;
+  background-color: $navBarColor;
   width: 100%;
   mat-icon {
     background-color: white;
@@ -24,7 +31,7 @@ mat-sidenav {
 }
 
 .contentContainer {
-  background-color: #FDE7B3;
+  background-color: $contentContainerColor;
   border: 2px solid grey;
 }
 
@@ -42,7 +49,6 @@ mat-sidenav {
 
 .extendedContent {
   overflow: auto;
-  background-color: #63A361;
   padding: 20px;
   margin: 20px;
   max-height: 100%;
@@ -50,7 +56,7 @@ mat-sidenav {
 }
 
 .extendedContentContainer {
-  background-color: #63A361;
+  background-color: $exntendedContentContainerColor;
   border: 2px solid grey;
 }
 
@@ -63,3 +69,4 @@ mat-sidenav {
   margin: 10px;
   border: 2px solid grey;
 }
+
