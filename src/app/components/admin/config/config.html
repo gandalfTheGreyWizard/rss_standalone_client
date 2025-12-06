@@ -1,0 +1,62 @@
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="Add">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar></div>
+        <mat-card-title>Config Addition Form</mat-card-title>
+      </mat-card-header>
+      <div mat-card-image></div>
+      <mat-card-content>
+        <form [formGroup]="configAdditionForm" class="configAdditionForm">
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>User Id</mat-label>
+                <input matInput placeholder="userId" formControlName="userId">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Feed Name</mat-label>
+                <input matInput placeholder="rss feed url to be added" formControlName="feedName">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Feed Url</mat-label>
+                <input matInput placeholder="rss url to subscribe" formControlName="feedUrl">
+            </mat-form-field>
+          </p>
+          <button
+            type="submit"
+            class="addTarget"
+            matButton="elevated"
+            matTooltip="Add Rss Sources to your configuration"
+            mat-dialog-close
+            (click)="processConfigAddition()"
+            >Add Config
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Edit">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar></div>
+        <mat-card-title>Shiba Inu returns </mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+      </mat-card-header>
+      <div mat-card-image></div>
+      <mat-card-content>
+        <p>
+          This is the second content
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button matButton>LIKE</button>
+        <button matButton>SHARE</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Third">Content 3</mat-tab>
+</mat-tab-group>

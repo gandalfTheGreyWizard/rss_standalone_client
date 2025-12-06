@@ -1,0 +1,69 @@
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="Add">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar></div>
+        <mat-card-title>User Addition Form</mat-card-title>
+        <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+      </mat-card-header>
+      <div mat-card-image></div>
+      <mat-card-content>
+        <form [formGroup]="userAdditionForm" class="userAdditionForm">
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+                <input matInput placeholder="Jane" formControlName="firstName">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+                <input matInput placeholder="doe" formControlName="lastName">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+                <input matInput placeholder="janedoe@mail.com" formControlName="email">
+            </mat-form-field>
+          </p>
+          <p>
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+                <input type="PASSWORD" matInput placeholder="Password@123" formControlName="password">
+            </mat-form-field>
+          </p>
+          <button
+            type="submit"
+            class="addTarget"
+            matButton="elevated"
+            matTooltip="Add Rss Sources to your configuration"
+            mat-dialog-close
+            (click)="processUserAddition()"
+            >Add User
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Edit">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar></div>
+        <mat-card-title>Shiba Inu returns </mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+      </mat-card-header>
+      <div mat-card-image></div>
+      <mat-card-content>
+        <p>
+          This is the second content
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button matButton>LIKE</button>
+        <button matButton>SHARE</button>
+      </mat-card-actions>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Third">Content 3</mat-tab>
+</mat-tab-group>

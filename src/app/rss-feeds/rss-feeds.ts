@@ -42,9 +42,8 @@ export class RssFeeds implements OnInit {
 
   // random feed sources
   feedSources = [
-    { name: 'hackernews', url: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
     { name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
-    { name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
+    //{ name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
   ]
 
   //news

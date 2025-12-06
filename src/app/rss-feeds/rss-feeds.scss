@@ -1,10 +1,4 @@
-//variable definitions
-
-$navBarColor: #313647;
-$sideNavColor: #435663;
-$contentContainerColor: #FFF8D4;
-$exntendedContentContainerColor: #A3B087;
-
+@import 'variables';
 mat-grid-tile {
   color: "white";
   background-color: "blue";

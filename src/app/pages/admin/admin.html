@@ -1,0 +1,20 @@
+<div class="topNavContainer">
+  <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
+</div>
+<mat-sidenav-container>
+  <mat-sidenav mode="side" [(opened)]="sidenavToggleState">
+    <mat-list>
+      @for (menuItems of leftMenu; track menuItems) {
+          <mat-list-item><div class="leftMenu" (click)="viewPanel(menuItems)">{{ menuItems }}</div></mat-list-item><mat-divider></mat-divider>
+      }
+    </mat-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    @if (currentPanel == "Users") {
+      <app-users></app-users>
+    }
+    @if (currentPanel == "Configs") {
+      <app-config></app-config>
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>

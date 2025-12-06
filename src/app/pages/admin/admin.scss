@@ -1,0 +1,37 @@
+@import 'variables';
+mat-grid-tile {
+  color: "white";
+  background-color: "blue";
+}
+.leftMenu {
+  color: black;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.leftMenu:hover {
+  color: white;
+}
+mat-sidenav-content {
+  padding: 10px;
+  height: 100vh;
+}
+mat-sidenav {
+  background-color: $sideNavColor;
+}
+
+.topNavContainer {
+  background-color: $navBarColor;
+  width: 100%;
+  mat-icon {
+    background-color: white;
+    padding: 5px;
+    margin: 5px;
+  }
+  mat-icon:hover {
+    border: 5px;
+    border-color: blue;
+  }
+}
+
+
