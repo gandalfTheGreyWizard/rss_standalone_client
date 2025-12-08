@@ -6,7 +6,7 @@ import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialogRef, MatDialogClose, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { RssFeeds } from '../../rss-feeds/rss-feeds';
+import { RssFeeds } from '../../../pages/rss-feeds/rss-feeds';
 
 @Component({
   selector: 'app-modal-container',

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { RssFeeds } from './rss-feeds/rss-feeds';
+import { RssFeeds } from './pages/rss-feeds/rss-feeds';
 import { Admin } from './pages/admin/admin';
 
 export const routes: Routes = [

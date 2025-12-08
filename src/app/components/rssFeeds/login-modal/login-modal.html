@@ -1,0 +1,35 @@
+<mat-dialog-content>
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar></div>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <div mat-card-image></div>
+    <mat-card-content>
+      <form [formGroup]="loginForm" class="loginForm">
+        <span>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput class="loginInput" placeholder="janedoe@mail.com" formControlName="email">
+          </mat-form-field>
+        </span>
+        <p>
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input type="PASSWORD" class="loginInput" matInput placeholder="Password@123" formControlName="password">
+          </mat-form-field>
+        </p>
+        <button
+          type="submit"
+          class="addTarget"
+          matButton="elevated"
+          matTooltip="Add Rss Sources to your configuration"
+          mat-dialog-close
+          (click)="processLogin()"
+          >Add User
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+

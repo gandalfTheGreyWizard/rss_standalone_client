@@ -1,20 +1,21 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
-import { RssParser } from '../helpers/rss-parser';
+import { RssParser } from '../../helpers/rss-parser';
 import * as _ from 'lodash';
 
 //material components imports
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatSidenav, MatSidenavContent, MatSidenavContainer } from '@angular/material/sidenav';
-import { RssFeedInterface } from '../dtos/rss-parser-dtos';
+import { RssFeedInterface } from '../../dtos/rss-parser-dtos';
 import { MatIcon } from '@angular/material/icon';
-import { GenericInterface } from '../dtos/rss-parser-dtos';
+import { GenericInterface } from '../../dtos/rss-parser-dtos';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 //component imports
-import { SidenavContainer } from '../components/sidenav-container/sidenav-container';
-import { ModalContainer } from '../components/modal-container/modal-container';
+import { SidenavContainer } from '../../components/general/sidenav-container/sidenav-container';
+import { ModalContainer } from '../../components/rssFeeds/modal-container/modal-container';
 import { FormGroup } from '@angular/forms';
+import { LoginModal } from '../../components/rssFeeds/login-modal/login-modal';
 
 @Component({
   selector: 'app-rss-feeds',
@@ -28,6 +29,7 @@ import { FormGroup } from '@angular/forms';
     MatIcon,
     SidenavContainer,
     ModalContainer,
+    LoginModal,
   ],
   templateUrl: './rss-feeds.html',
   styleUrl: './rss-feeds.scss'
@@ -62,7 +64,22 @@ export class RssFeeds implements OnInit {
   private rssParser = inject(RssParser)
 
   async ngOnInit() {
-    console.log('init');
+    localStorage.removeItem('token');
+    if (localStorage.getItem('token')) {
+      console.log('jwt token value is ', localStorage.getItem('token'));
+    } else {
+      this.dialog.open(LoginModal, {
+        id: 'loingmodal',
+        data: '',
+        width: '50vw',
+        enterAnimationDuration: 300,
+        exitAnimationDuration: 300
+      }).afterOpened().subscribe(() => {
+        this.dialog.getDialogById('loginmodal')?.afterClosed().subscribe((data) => {
+          this.addToFeeds(data.rssUrl);
+        });
+      });
+    }
     const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
       try {
         return await this.rssParser.getData((eachFeedSourceObject.url));
