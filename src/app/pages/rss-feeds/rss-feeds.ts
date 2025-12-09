@@ -16,7 +16,11 @@ import { SidenavContainer } from '../../components/general/sidenav-container/sid
 import { ModalContainer } from '../../components/rssFeeds/modal-container/modal-container';
 import { FormGroup } from '@angular/forms';
 import { LoginModal } from '../../components/rssFeeds/login-modal/login-modal';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
+// dto imports
+import { UserConfig, ConfigsResponse } from '../../dtos/rss-parser-dtos';
 @Component({
   selector: 'app-rss-feeds',
   imports: [
@@ -36,17 +40,14 @@ import { LoginModal } from '../../components/rssFeeds/login-modal/login-modal';
 })
 
 export class RssFeeds implements OnInit {
+  _httpClient = inject(HttpClient);
   private dialog = inject(MatDialog);
   feeds: GenericInterface[] = [];
   sidenavToggleState: boolean = true;
   navigationIcon='close';
   masterIndexCount: number = 0;
-
+  feedSources?: UserConfig[] = [];
   // random feed sources
-  feedSources = [
-    { name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
-    //{ name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
-  ]
 
   //news
   //feedSources = [
@@ -64,9 +65,13 @@ export class RssFeeds implements OnInit {
   private rssParser = inject(RssParser)
 
   async ngOnInit() {
-    localStorage.removeItem('token');
     if (localStorage.getItem('token')) {
       console.log('jwt token value is ', localStorage.getItem('token'));
+      this._httpClient.get(`${environment.apiUrl}/configs/list`, { headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}}).subscribe((data: Partial<ConfigsResponse>) => {
+        console.log('user config object is ', data.configs);
+        this.feedSources = data.configs;
+        this.rederFeeds();
+      });
     } else {
       this.dialog.open(LoginModal, {
         id: 'loingmodal',
@@ -75,24 +80,48 @@ export class RssFeeds implements OnInit {
         enterAnimationDuration: 300,
         exitAnimationDuration: 300
       }).afterOpened().subscribe(() => {
-        this.dialog.getDialogById('loginmodal')?.afterClosed().subscribe((data) => {
-          this.addToFeeds(data.rssUrl);
+        this.dialog.getDialogById('loginmodal')?.afterClosed().subscribe(() => {
+          console.log('logged in ');
+          this._httpClient.get(environment.apiUrl, { headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}}).subscribe((data: Partial<ConfigsResponse>) => {
+            this.feedSources = data.configs;
+          });
         });
       });
     }
-    const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
-      try {
-        return await this.rssParser.getData((eachFeedSourceObject.url));
-      } catch(error) {
-        return [];
-      }
-    }));
-    feedsMasterArr.forEach(async (eachFeedsArr, index_first) => {
-      const idSortedFeeds = this.insertIds(eachFeedsArr as [GenericInterface]);
-      eachFeedsArr.forEach((eachFeed) => {
-        this.feeds.push(eachFeed);
+    console.log('feed sources being rendered is ', this.feedSources);
+    //if (this.feedSources?.length) {
+      //const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
+        //try {
+          //return await this.rssParser.getData((eachFeedSourceObject.feedUrl));
+        //} catch(error) {
+          //return [];
+        //}
+      //}));
+      //feedsMasterArr.forEach(async (eachFeedsArr, index_first) => {
+        //const idSortedFeeds = this.insertIds(eachFeedsArr as [GenericInterface]);
+        //eachFeedsArr.forEach((eachFeed) => {
+          //this.feeds.push(eachFeed);
+        //});
+      //});
+    //}
+  }
+
+  async rederFeeds() {
+    if (this.feedSources?.length) {
+      const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
+        try {
+          return await this.rssParser.getData((eachFeedSourceObject.feedUrl));
+        } catch(error) {
+          return [];
+        }
+      }));
+      feedsMasterArr.forEach(async (eachFeedsArr, index_first) => {
+        const idSortedFeeds = this.insertIds(eachFeedsArr as [GenericInterface]);
+        eachFeedsArr.forEach((eachFeed) => {
+          this.feeds.push(eachFeed);
+        });
       });
-    });
+    }
   }
 
   async insertIds(feedsArr: [GenericInterface]) {

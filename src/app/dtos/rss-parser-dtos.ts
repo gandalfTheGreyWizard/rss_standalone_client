@@ -1,3 +1,5 @@
+import { Data } from "@angular/router";
+
 export interface RssParserDtos {
 }
 
@@ -29,4 +31,17 @@ export interface RssFeedInterface {
 
 export interface UnitInterface {
   [key: string]: CustomDict | string;
+}
+
+export interface UserConfig {
+  id: string;
+  userId: string;
+  feedName: string;
+  feedUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ConfigsResponse {
+  configs: UserConfig[];
 }
