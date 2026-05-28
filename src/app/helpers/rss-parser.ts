@@ -10,12 +10,12 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root'
 })
 export class RssParser {
-  private http = inject(HttpClient);
+  private httpClient = inject(HttpClient);
   private customParserService = inject(CustomParsers);
   private rssParser = new Parser();
 
   async getData(url: string) {
-      const rssRawText = await firstValueFrom(this.http.get(url, { responseType: 'text' }));
+      const rssRawText = await firstValueFrom(this.httpClient.get(url, { responseType: 'text' }));
       const parsedFeed = await this.rssParser.parseString(rssRawText);
       return parsedFeed['items'];
   }

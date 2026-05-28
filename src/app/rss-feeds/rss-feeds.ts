@@ -14,7 +14,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 //component imports
 import { SidenavContainer } from '../components/sidenav-container/sidenav-container';
 import { ModalContainer } from '../components/modal-container/modal-container';
+import { LoginModal } from '../components/login-modal/login-modal';
 import { FormGroup } from '@angular/forms';
+import { Router, ROUTES } from '@angular/router';
 
 @Component({
   selector: 'app-rss-feeds',
@@ -35,6 +37,7 @@ import { FormGroup } from '@angular/forms';
 
 export class RssFeeds implements OnInit {
   private dialog = inject(MatDialog);
+  private router = inject(Router);
   feeds: GenericInterface[] = [];
   sidenavToggleState: boolean = true;
   navigationIcon='close';
@@ -42,9 +45,9 @@ export class RssFeeds implements OnInit {
 
   // random feed sources
   feedSources = [
-    { name: 'hackernews', url: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
-    { name: 'slashdot', url: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
-    { name: 'krebs', url: 'https://krebsonsecurity.com/feed/' },
+    { feedName: 'hackernews', feedUrl: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
+    { feedName: 'slashdot', feedUrl: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
+    { feedName: 'krebs', feedUrl: 'https://krebsonsecurity.com/feed/' },
   ]
 
   //news
@@ -63,10 +66,27 @@ export class RssFeeds implements OnInit {
   private rssParser = inject(RssParser)
 
   async ngOnInit() {
-    console.log('init');
+    console.log(localStorage.getItem('token'));
+    if (localStorage.getItem('token')) {
+      console.log("already logged in");
+    } else {
+      this.dialog.open(LoginModal, {
+        id: 'loginmodal',
+        data: '',
+        width: '50vw',
+        enterAnimationDuration: 300,
+        exitAnimationDuration: 300
+      }).afterOpened().subscribe(() => {
+        this.dialog.getDialogById('loginmodal')?.afterClosed().subscribe((data) => {
+          console.log('data recieved from login modal ', data);
+          console.log('current url', this.router.url);
+          this.router.navigate([this.router.url]);
+        });
+      });
+    };
     const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
       try {
-        return await this.rssParser.getData((eachFeedSourceObject.url));
+        return await this.rssParser.getData((eachFeedSourceObject.feedUrl));
       } catch(error) {
         return [];
       }
