@@ -27,6 +27,11 @@ export interface RssFeedInterface {
   pubDate?: Date;
 }
 
+export interface FeedConfig {
+  feedName: string;
+  feedUrl: string;
+}
+
 export interface UnitInterface {
   [key: string]: CustomDict | string;
 }

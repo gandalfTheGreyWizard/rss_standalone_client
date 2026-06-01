@@ -5,7 +5,6 @@ import { RssFeedInterface } from '../dtos/rss-parser-dtos';
 import { CustomParsers } from './custom-parsers';
 import Parser from 'rss-parser';
 import { firstValueFrom } from 'rxjs';
-
 @Injectable({
   providedIn: 'root'
 })

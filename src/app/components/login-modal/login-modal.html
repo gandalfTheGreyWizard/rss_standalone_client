@@ -2,19 +2,19 @@
     <mat-dialog-content>
       <div class="formContainer">
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="formgroupelement">
-          <mat-form-field appearance="fill" class="loginFormFields">
+          <mat-form-field appearance="fill" class="formFields">
             <mat-label>Email</mat-label>
-            <input matInput placeholder="Placeholder" formControlName="email" >
+            <input matInput placeholder="registrations please" formControlName="email" >
             <mat-icon matSuffix>email id</mat-icon>
           </mat-form-field><br>
-          <mat-form-field appearance="fill" class="loginFormFields">
+          <mat-form-field appearance="fill" class="formFields">
             <mat-label>Password</mat-label>
-            <input matInput [type]="'password'" placeholder="Placeholder" formControlName="password" >
+            <input matInput [type]="'password'" placeholder="the password mf" formControlName="password" >
             <mat-icon matSuffix>password</mat-icon>
           </mat-form-field><br>
           <button
             type="submit"
-            class="addTarget"
+            class="formBtn"
             matButton="elevated"
             matTooltip="try to login"
             mat-dialog-close

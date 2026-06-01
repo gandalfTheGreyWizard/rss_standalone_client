@@ -46,7 +46,6 @@ export class LoginModal {
       this.dialogRef.close(true);
     }, (err) => {
       console.log('err', err.message);
-      this.dialogRef.close(false);
     });
   }
 }

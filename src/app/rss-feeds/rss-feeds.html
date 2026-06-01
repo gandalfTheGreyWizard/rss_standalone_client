@@ -3,23 +3,31 @@
 </div>
 <mat-sidenav-container>
   <mat-sidenav mode="side" [(opened)]="sidenavToggleState">
-    <app-sidenav-container (addTargetEmitter)="triggerAddTargetModal()"></app-sidenav-container>
+    <app-sidenav-container (addTargetEmitter)="triggerAddTargetModal()" (showConfigEmitter)="showConfig()"></app-sidenav-container>
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-grid-list cols="4" rowHeight="100px" >
       @for (eachFeed of feeds; track eachFeed['id']) {
-          <mat-grid-tile [colspan]="4" [rowspan]="1"></mat-grid-tile>
-          <mat-grid-tile [colspan]="4" [rowspan]="4" class="contentContainer">
-            <div class="content">
-              <p>{{eachFeed['title']}}</p>
-              <div [innerHtml]="eachFeed['content']"></div>
-            </div>
+          <mat-grid-tile [colspan]="1" [rowspan]="3" class="contentContainer">
+            <mat-card class="example-card" appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>{{eachFeed['title']}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div [innerHtml]="eachFeed['content']">
+              </div>
+            </mat-card-content>
+          </mat-card>
+            <!--<div class="content">-->
+              <!--<h3>{{eachFeed['title']}}</h3>-->
+              <!--<div [innerHtml]="eachFeed['content']"></div>-->
+            <!--</div>-->
           </mat-grid-tile>
-          @if (eachFeed['content:encoded']) {
-            <mat-grid-tile [colspan]="4" [rowspan]="6" class="extendedContentContainer">
-                <div [innerHtml]="eachFeed['content:encoded']" class="extendedContent"></div>
-            </mat-grid-tile>
-          }
+          <!--@if (eachFeed['content:encoded']) {-->
+            <!--<mat-grid-tile [colspan]="4" [rowspan]="6" class="extendedContentContainer">-->
+                <!--<div [innerHtml]="eachFeed['content:encoded']" class="extendedContent"></div>-->
+            <!--</mat-grid-tile>-->
+          <!--}-->
       }
     </mat-grid-list>
   </mat-sidenav-content>

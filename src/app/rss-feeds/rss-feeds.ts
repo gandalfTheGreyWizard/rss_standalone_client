@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { MatSidenav, MatSidenavContent, MatSidenavContainer } from '@angular/material/sidenav';
-import { RssFeedInterface } from '../dtos/rss-parser-dtos';
+import { FeedConfig, RssFeedInterface } from '../dtos/rss-parser-dtos';
 import { MatIcon } from '@angular/material/icon';
 import { GenericInterface } from '../dtos/rss-parser-dtos';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -17,6 +17,13 @@ import { ModalContainer } from '../components/modal-container/modal-container';
 import { LoginModal } from '../components/login-modal/login-modal';
 import { FormGroup } from '@angular/forms';
 import { Router, ROUTES } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { AddToFeedsInput } from './rss-feeds.dtos';
+import { GenericHelper } from '../helpers/generic-helper';
+import { UserConfig } from '../dtos/config-query-dtos';
+import { MatCardModule } from '@angular/material/card';
+import * as cheerio from 'cheerio';
 
 @Component({
   selector: 'app-rss-feeds',
@@ -30,12 +37,15 @@ import { Router, ROUTES } from '@angular/router';
     MatIcon,
     SidenavContainer,
     ModalContainer,
+    MatCardModule
   ],
   templateUrl: './rss-feeds.html',
   styleUrl: './rss-feeds.scss'
 })
 
 export class RssFeeds implements OnInit {
+  httpClient = inject(HttpClient);
+  _genericHelper = inject(GenericHelper);
   private dialog = inject(MatDialog);
   private router = inject(Router);
   feeds: GenericInterface[] = [];
@@ -44,11 +54,17 @@ export class RssFeeds implements OnInit {
   masterIndexCount: number = 0;
 
   // random feed sources
-  feedSources = [
-    { feedName: 'hackernews', feedUrl: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
-    { feedName: 'slashdot', feedUrl: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
-    { feedName: 'krebs', feedUrl: 'https://krebsonsecurity.com/feed/' },
-  ]
+  feedSources: FeedConfig[] = []
+  //feedSources: FeedConfig[] = [
+    //{ feedName: 'hackernews', feedUrl: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
+    //{ feedName: 'slashdot', feedUrl: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
+    //{ feedName: 'krebs', feedUrl: 'https://krebsonsecurity.com/feed/' },
+  //];
+
+    //{ feedName: 'hackernews', feedUrl: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
+    //{ feedName: 'slashdot', feedUrl: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
+    //{ feedName: 'krebs', feedUrl: 'https://krebsonsecurity.com/feed/' },
+  //]
 
   //news
   //feedSources = [
@@ -69,7 +85,32 @@ export class RssFeeds implements OnInit {
     console.log(localStorage.getItem('token'));
     if (localStorage.getItem('token')) {
       console.log("already logged in");
+      const decodeTokenHeader = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+      // check if the current stored jwt is valid or not
+      await this.httpClient.get(`${environment.apiUrl}/auth/decode`, { headers: decodeTokenHeader}).subscribe((data) => {
+        console.log(data);
+      }, (err) => {
+        // incase the current token is unauthorized trigger the login modal
+        console.error(err);
+        this.dialog.open(LoginModal, {
+          id: 'loginmodal',
+          data: '',
+          width: '50vw',
+          enterAnimationDuration: 300,
+          exitAnimationDuration: 300
+        }).afterOpened().subscribe(() => {
+          this.dialog.getDialogById('loginmodal')?.afterClosed().subscribe((data) => {
+            console.log('data recieved from login modal ', data);
+            console.log('current url', this.router.url);
+            this.router.navigate([this.router.url]);
+          });
+        });
+      });
     } else {
+      // incase the token is missing from localstorage altogether then trigger the login modal
       this.dialog.open(LoginModal, {
         id: 'loginmodal',
         data: '',
@@ -84,6 +125,23 @@ export class RssFeeds implements OnInit {
         });
       });
     };
+    const authHeaders = await this._genericHelper.getAuthorizationHeader();
+    console.log('auth headers responded from function', authHeaders);
+    const userConfig = await this.httpClient.get<UserConfig[]>(`${environment.apiUrl}/config/list`, { headers: authHeaders }).subscribe(async (data) => {
+      this.feedSources = data.map((eachConfig)=> {
+        return {
+          feedUrl: eachConfig.feedUrl,
+          feedName: eachConfig.feedName
+        }
+      });
+      await this.renderFeeds();
+    }, (err) => {
+      console.error('error fetching user config', err);
+    });
+  }
+
+  async renderFeeds() {
+    // function the render the initial feeds in the page against the config pulled against the user
     const feedsMasterArr = await Promise.all(this.feedSources.map(async (eachFeedSourceObject) => {
       try {
         return await this.rssParser.getData((eachFeedSourceObject.feedUrl));
@@ -98,6 +156,7 @@ export class RssFeeds implements OnInit {
       });
     });
   }
+
 
   async insertIds(feedsArr: [GenericInterface]) {
     return await Promise.all(feedsArr.map((eachFeed) => {
@@ -114,11 +173,19 @@ export class RssFeeds implements OnInit {
     }));
   }
 
-  async addToFeeds(url: string) {
+  async showConfig() {
+    // for debugging the current config in the system
+    console.log('feedSource', this.feedSources);
+    console.log('feeds', this.feeds);
+  }
+
+  async addToFeeds(data: AddToFeedsInput) {
+    // insert the feed name and url just added from the target addition modal
     try {
-      console.log('url in add to feeds function', url);
-      const newFeedsArr = await this.rssParser.getData(url);
+      console.log('url in add to feeds function', data.feedUrl);
+      const newFeedsArr = await this.rssParser.getData(data.feedUrl);
       const idSortedFeeds = await this.insertIds(newFeedsArr as [GenericInterface]);
+      this.feedSources.push(data);
       this.feeds = _.union(this.feeds, idSortedFeeds);
     } catch(err) {
       console.error(err);
@@ -126,6 +193,7 @@ export class RssFeeds implements OnInit {
   }
 
   async triggerAddTargetModal() {
+    // add a new rss target to listen to
     console.log("trigger modal");
     this.dialog.open(ModalContainer, {
       id: '1234',
@@ -135,7 +203,7 @@ export class RssFeeds implements OnInit {
       exitAnimationDuration: 300
     }).afterOpened().subscribe(() => {
       this.dialog.getDialogById('1234')?.afterClosed().subscribe((data) => {
-        this.addToFeeds(data.rssUrl);
+        this.addToFeeds(data);
       });
     });
   }
