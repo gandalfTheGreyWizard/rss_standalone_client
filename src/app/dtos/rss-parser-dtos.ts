@@ -9,7 +9,7 @@ export interface XmlParsedReddit {
 }
 
 export interface GenericInterface {
-  [key: string]: string | GenericInterface;
+  [key: string]: string | GenericInterface | string[];
 }
 
 export interface CustomDict {

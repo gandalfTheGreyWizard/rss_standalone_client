@@ -30,18 +30,27 @@ mat-sidenav {
   }
 }
 
-.content {
+.contentCard {
   background-color: $contentContainerColor;
   border: 2px solid grey;
   margin: 5px;
-  overflow: hidden;
   max-height: 100%;
   max-width: 100%;
-  margin: 10px;
+  height: 100%;
   padding: 20px;
 }
-.content:hover {
+.contentCard:hover {
   border: 2px solid black;
+}
+
+.content{
+  padding: 20px;
+  max-height: 100%;
+  overflow-y: hidden;
+  color: grey;
+}
+.content:hover {
+  overflow-y: scroll;
 }
 
 .extendedContent {
