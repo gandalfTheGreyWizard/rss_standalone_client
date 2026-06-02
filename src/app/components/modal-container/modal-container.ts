@@ -27,7 +27,8 @@ export class ModalContainer {
   formData = inject(MAT_DIALOG_DATA);
   dialogRef = inject(MatDialogRef<RssFeeds>);
   feedAdditionForm = new FormGroup({
-    rssUrl: new FormControl(''),
+    feedName: new FormControl(''),
+    feedUrl: new FormControl(''),
   });
 
   printUrl() {

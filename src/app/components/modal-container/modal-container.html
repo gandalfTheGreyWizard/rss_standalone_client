@@ -2,15 +2,19 @@
     <mat-dialog-content>
       <div class="formContainer">
         <form [formGroup]="feedAdditionForm" (ngSubmit)="printUrl()">
-          <mat-form-field appearance="fill">
+          <mat-form-field appearance="fill" class="formFields">
+            <mat-label>Feed Name</mat-label>
+            <input matInput placeholder="name of the feed" formControlName="feedName" >
+            <mat-icon matSuffix>fingerprint</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="formFields">
             <mat-label>Rss Url</mat-label>
-            <input matInput placeholder="Placeholder" formControlName="rssUrl" >
+            <input matInput placeholder="url of the feed (rss)" formControlName="feedUrl" >
             <mat-icon matSuffix>add_link</mat-icon>
-            <mat-hint>Hint</mat-hint>
-          </mat-form-field><br>
+          </mat-form-field>
           <button
             type="submit"
-            class="addTarget"
+            class="formBtn"
             matButton="elevated"
             matTooltip="Add Rss Sources to your configuration"
             mat-dialog-close

@@ -1,10 +1,5 @@
 //variable definitions
-
-$navBarColor: #313647;
-$sideNavColor: #435663;
-$contentContainerColor: #FFF8D4;
-$exntendedContentContainerColor: #A3B087;
-
+@use '../styles/colors' as colors;
 mat-grid-tile {
   color: "white";
   background-color: "blue";
@@ -13,14 +8,15 @@ mat-sidenav-content {
   padding: 10px;
 }
 mat-sidenav {
-  background-color: $sideNavColor;
+  background-color: colors.$sideNavColor;
+  border-radius: 0px;
 }
 
 .topNavContainer {
-  background-color: $navBarColor;
+  background-color: colors.$navBarColor;
   width: 100%;
   mat-icon {
-    background-color: white;
+    background-color: colors.$backgroundColor;
     padding: 5px;
     margin: 5px;
   }
@@ -30,21 +26,31 @@ mat-sidenav {
   }
 }
 
-.contentContainer {
-  background-color: $contentContainerColor;
-  border: 2px solid grey;
+.sideNavContentContainer {
+  background-color: colors.$backgroundColor;
 }
 
-.contentContainer:hover {
+.contentCard {
+  background-color: colors.$contentContainerColor;
+  border: 2px solid colors.$contentFontColor;
+  margin: 5px;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+.contentCard:hover {
   border: 2px solid black;
 }
 
-.content {
-  overflow: auto;
-  max-height: 100%;
-  max-width: 100%;
-  margin: 10px;
+.content{
   padding: 20px;
+  max-height: 100%;
+  overflow-y: hidden;
+  color: grey;
+}
+.content:hover {
+  overflow-y: scroll;
 }
 
 .extendedContent {
@@ -56,7 +62,7 @@ mat-sidenav {
 }
 
 .extendedContentContainer {
-  background-color: $exntendedContentContainerColor;
+  background-color: colors.$exntendedContentContainerColor;
   border: 2px solid grey;
 }
 

@@ -9,7 +9,7 @@ export interface XmlParsedReddit {
 }
 
 export interface GenericInterface {
-  [key: string]: string | GenericInterface;
+  [key: string]: string | GenericInterface | string[];
 }
 
 export interface CustomDict {
@@ -25,6 +25,11 @@ export interface RssFeedInterface {
   isoDate?: Date;
   link?: string,
   pubDate?: Date;
+}
+
+export interface FeedConfig {
+  feedName: string;
+  feedUrl: string;
 }
 
 export interface UnitInterface {

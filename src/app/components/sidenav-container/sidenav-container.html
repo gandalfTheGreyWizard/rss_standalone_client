@@ -1,9 +1,18 @@
-<div class="sideNavElementsContainer">
-  <button
-    class="addTarget"
-    matButton="elevated"
-    matTooltip="Add Rss Sources to your configuration"
-    (click)="addTarget()"
-    >Add Target
-  </button>
-</div>
+<mat-nav-list >
+  <a
+      mat-list-item
+      (click)="addTarget()"
+      class="sideNavElements"
+    >
+  <mat-icon matListItemIcon>add_link</mat-icon>
+  <div> Add Target </div>
+  </a>
+  <a
+      mat-list-item
+      (click)="showConfig()"
+      class="sideNavElements"
+    >
+  <mat-icon matListItemIcon>build</mat-icon>
+  <div> Show Config </div>
+  </a>
+</mat-nav-list>
