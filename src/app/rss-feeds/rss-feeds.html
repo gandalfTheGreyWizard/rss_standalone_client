@@ -1,12 +1,12 @@
 <div class="topNavContainer">
-  <mat-icon [fontIcon]="navigationIcon" (click)="toggleSidenav()"></mat-icon>
+  <mat-icon [fontIcon]="navigationIcon" (click)="toggleSideNav()"></mat-icon>
 </div>
 <mat-sidenav-container>
-  <mat-sidenav mode="side" [(opened)]="sidenavToggleState">
+  <mat-sidenav mode="side" [(opened)]="sideNavToggleState">
     <app-sidenav-container (addTargetEmitter)="triggerAddTargetModal()" (showConfigEmitter)="showConfig()"></app-sidenav-container>
   </mat-sidenav>
-  <mat-sidenav-content>
-    <mat-grid-list cols="4" rowHeight="100px" >
+  <mat-sidenav-content class="sideNavContentContainer" (click)="closeSideNav()">
+    <mat-grid-list cols="4" rowHeight="100px">
       @for (eachFeed of feeds; track eachFeed['id']) {
           <mat-grid-tile [colspan]="1" [rowspan]="4" class="contentContainer">
             <mat-card class="contentCard" appearance="outlined">

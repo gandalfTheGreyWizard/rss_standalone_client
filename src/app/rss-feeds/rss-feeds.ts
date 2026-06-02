@@ -49,7 +49,7 @@ export class RssFeeds implements OnInit {
   private dialog = inject(MatDialog);
   private router = inject(Router);
   feeds: GenericInterface[] = [];
-  sidenavToggleState: boolean = true;
+  sideNavToggleState: boolean = true;
   navigationIcon='close';
   masterIndexCount: number = 0;
 
@@ -208,8 +208,8 @@ export class RssFeeds implements OnInit {
     });
   }
 
-  async toggleSidenav() {
-    this.sidenavToggleState = !this.sidenavToggleState;
+  async toggleSideNav() {
+    this.sideNavToggleState = !this.sideNavToggleState;
     //this.feeds.forEach((eachFeed) => {
       //const domparserInstance = new DOMParser();
       //const parsedFeedContent = domparserInstance.parseFromString(eachFeed.content ? eachFeed.content.toString() : ' ', 'text/html');
@@ -223,6 +223,12 @@ export class RssFeeds implements OnInit {
     } else {
       this.navigationIcon = 'close';
     }
+  }
+
+  async closeSideNav() {
+    this.sideNavToggleState = false;
+    this.navigationIcon = 'menu';
+    console.log("closed atleast tried to ");
   }
 
   async parserValueAdded(parserAddedForm: FormGroup) {
