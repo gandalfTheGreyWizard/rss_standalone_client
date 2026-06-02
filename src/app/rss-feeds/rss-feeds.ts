@@ -54,7 +54,7 @@ export class RssFeeds implements OnInit {
   masterIndexCount: number = 0;
 
   // random feed sources
-  feedSources: FeedConfig[] = []
+  feedSources: UserConfig[] = []
   //feedSources: FeedConfig[] = [
     //{ feedName: 'hackernews', feedUrl: 'https://feeds.feedburner.com/TheHackersNews?format=xml' },
     //{ feedName: 'slashdot', feedUrl: 'https://rss.slashdot.org/Slashdot/slashdotMain' },
@@ -128,12 +128,7 @@ export class RssFeeds implements OnInit {
     const authHeaders = await this._genericHelper.getAuthorizationHeader();
     console.log('auth headers responded from function', authHeaders);
     const userConfig = await this.httpClient.get<UserConfig[]>(`${environment.apiUrl}/config/list`, { headers: authHeaders }).subscribe(async (data) => {
-      this.feedSources = data.map((eachConfig)=> {
-        return {
-          feedUrl: eachConfig.feedUrl,
-          feedName: eachConfig.feedName
-        }
-      });
+      this.feedSources = data;
       await this.renderFeeds();
     }, (err) => {
       console.error('error fetching user config', err);
@@ -185,11 +180,28 @@ export class RssFeeds implements OnInit {
       console.log('url in add to feeds function', data.feedUrl);
       const newFeedsArr = await this.rssParser.getData(data.feedUrl);
       const idSortedFeeds = await this.insertIds(newFeedsArr as [GenericInterface]);
-      this.feedSources.push(data);
+      console.log()
+      const nextFeedSourceId = this.feedSources[this.feedSources.length - 1].id + 1;
+      const feedSourceObject: UserConfig = {
+        id: nextFeedSourceId,
+        feedName: data.feedName,
+        feedUrl: data.feedUrl,
+        userId: this.feedSources[0].userId,
+      }
+      this.feedSources.push(feedSourceObject);
+      await this.httpClient.post(`${environment.apiUrl}/config/create`, feedSourceObject, { headers: this._genericHelper.getAuthorizationHeader() }).subscribe((data) => {
+        console.log('feed source config updated', data);
+      }, (err) => {
+        console.error('error while creation', err);
+      });
       this.feeds = _.union(this.feeds, idSortedFeeds);
     } catch(err) {
       console.error(err);
     }
+  }
+
+  async saveConfig() {
+    console.log("saving lol");
   }
 
   async triggerAddTargetModal() {

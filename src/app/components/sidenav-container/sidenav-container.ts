@@ -16,12 +16,16 @@ import { MatIconModule } from '@angular/material/icon';
 export class SidenavContainer {
   addTargetEmitter = output<void>();
   showConfigEmitter = output<void>();
-
+  saveConfigEmitter = output<void>();
   async addTarget() {
     this.addTargetEmitter.emit();
   }
 
   async showConfig() {
     this.showConfigEmitter.emit();
+  }
+
+  async saveConfig() {
+    this.saveConfigEmitter.emit();
   }
 }
