@@ -21,7 +21,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AddToFeedsInput } from './rss-feeds.dtos';
 import { GenericHelper } from '../helpers/generic-helper';
-import { UserConfig } from '../dtos/config-query-dtos';
+import { DecodedTokenObject, UserConfig } from '../dtos/backend-query-dtos';
 import { MatCardModule } from '@angular/material/card';
 import * as cheerio from 'cheerio';
 
@@ -49,9 +49,11 @@ export class RssFeeds implements OnInit {
   private dialog = inject(MatDialog);
   private router = inject(Router);
   feeds: GenericInterface[] = [];
-  sideNavToggleState: boolean = true;
-  navigationIcon='close';
+  sideNavToggleState: boolean = false;
+  navigationIcon='menu';
   masterIndexCount: number = 0;
+  lastFeedsId = 0;
+  currentUserObject?: DecodedTokenObject;
 
   // random feed sources
   feedSources: UserConfig[] = []
@@ -90,8 +92,9 @@ export class RssFeeds implements OnInit {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
       // check if the current stored jwt is valid or not
-      await this.httpClient.get(`${environment.apiUrl}/auth/decode`, { headers: decodeTokenHeader}).subscribe((data) => {
+      await this.httpClient.get<DecodedTokenObject>(`${environment.apiUrl}/auth/decode`, { headers: decodeTokenHeader}).subscribe((data) => {
         console.log(data);
+        this.currentUserObject = data;
       }, (err) => {
         // incase the current token is unauthorized trigger the login modal
         console.error(err);
@@ -180,21 +183,57 @@ export class RssFeeds implements OnInit {
       console.log('url in add to feeds function', data.feedUrl);
       const newFeedsArr = await this.rssParser.getData(data.feedUrl);
       const idSortedFeeds = await this.insertIds(newFeedsArr as [GenericInterface]);
-      console.log()
-      const nextFeedSourceId = this.feedSources[this.feedSources.length - 1].id + 1;
-      const feedSourceObject: UserConfig = {
-        id: nextFeedSourceId,
-        feedName: data.feedName,
-        feedUrl: data.feedUrl,
-        userId: this.feedSources[0].userId,
+      const currentLastid = this.feedSources.length ? this.feedSources[this.feedSources.length - 1].id : null;
+      if (currentLastid) {
+        // section to execute if there is existing config stored against the user in the backend database
+        try {
+          const feedSourceObject: UserConfig = {
+            id: this.lastFeedsId,
+            feedName: data.feedName,
+            feedUrl: data.feedUrl,
+            userId: this.currentUserObject ? this.currentUserObject.id : -1,
+          }
+          this.feedSources.push(feedSourceObject);
+          await this.httpClient.post(`${environment.apiUrl}/config/create`, feedSourceObject, { headers: this._genericHelper.getAuthorizationHeader() }).subscribe((data) => {
+            console.log('feed source config updated', data);
+          }, (err) => {
+            console.error('error while creation', err);
+          });
+          this.feeds = _.union(this.feeds, idSortedFeeds);
+        } catch(err) {
+          console.error(err);
+        }
+      } else {
+        // section to execute incase the existing user config is empty
+        try {
+          const feedSourceObject: UserConfig = {
+            feedName: data.feedName,
+            feedUrl: data.feedUrl,
+            userId: this.currentUserObject ? this.currentUserObject.id : -1,
+          }
+          await this.httpClient.post<UserConfig>(`${environment.apiUrl}/config/create`, feedSourceObject, { headers: this._genericHelper.getAuthorizationHeader() }).subscribe((data) => {
+            this.feedSources.push(data);
+            console.log('feed source config updated', data);
+          }, (err) => {
+            console.error('error while creation', err);
+          });
+          this.feeds = _.union(this.feeds, idSortedFeeds);
+        } catch(err) {
+          console.error(err);
+        }
       }
-      this.feedSources.push(feedSourceObject);
-      await this.httpClient.post(`${environment.apiUrl}/config/create`, feedSourceObject, { headers: this._genericHelper.getAuthorizationHeader() }).subscribe((data) => {
-        console.log('feed source config updated', data);
-      }, (err) => {
-        console.error('error while creation', err);
-      });
-      this.feeds = _.union(this.feeds, idSortedFeeds);
+      //if (this.feedSources.length > 0 && typeof this.feedSources[this.feedSources.length - 1].id != undefined) {
+        //this.lastFeedsId = this.feedSources[this.feedSources.length - 1].id ? this.feedSources[this.feedSources.length - 1].id + 1 : 0;
+      //}
+      if (this.feedSources.length ) {
+      } else {
+        const feedSourceObject: UserConfig = {
+          id: this.lastFeedsId,
+          feedName: data.feedName,
+          feedUrl: data.feedUrl,
+          userId: this.currentUserObject ? this.currentUserObject.id : -1,
+        }
+      }
     } catch(err) {
       console.error(err);
     }
@@ -222,14 +261,6 @@ export class RssFeeds implements OnInit {
 
   async toggleSideNav() {
     this.sideNavToggleState = !this.sideNavToggleState;
-    //this.feeds.forEach((eachFeed) => {
-      //const domparserInstance = new DOMParser();
-      //const parsedFeedContent = domparserInstance.parseFromString(eachFeed.content ? eachFeed.content.toString() : ' ', 'text/html');
-      //const imgTags = parsedFeedContent.getElementsByTagName('img');
-      //for (const eachItem of imgTags) {
-        //console.log('eachItem', eachItem.getAttribute('src'));
-      //}
-    //});
     if (this.navigationIcon == 'close') {
       this.navigationIcon = 'menu';
     } else {
@@ -238,9 +269,13 @@ export class RssFeeds implements OnInit {
   }
 
   async closeSideNav() {
-    this.sideNavToggleState = false;
     this.navigationIcon = 'menu';
-    console.log("closed atleast tried to ");
+    this.sideNavToggleState = false;
+  }
+
+  async openSideNav() {
+    this.navigationIcon= 'close';
+    this.sideNavToggleState = true;
   }
 
   async parserValueAdded(parserAddedForm: FormGroup) {

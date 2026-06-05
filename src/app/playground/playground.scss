@@ -1,0 +1,10 @@
+@use '../styles/colors' as colors;
+.sideNavContainer {
+  background-color: colors.$backgroundColor;
+  height: 100vh;
+}
+
+.sideNavElements {
+  color: colors.$contentFontColor;
+  text-align: center;
+}

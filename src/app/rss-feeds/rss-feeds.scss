@@ -26,8 +26,9 @@ mat-sidenav {
   }
 }
 
-.sideNavContentContainer {
+.sideNavContainer {
   background-color: colors.$backgroundColor;
+  height: 100vh;
 }
 
 .contentCard {
