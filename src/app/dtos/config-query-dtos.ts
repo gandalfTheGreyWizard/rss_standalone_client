@@ -1,9 +1,9 @@
 export interface UserConfig {
-  createdAt: Date;
+  createdAt?: Date;
   feedName: string;
   feedUrl: string;
   id: number;
-  updatedAt: Date;
+  updatedAt?: Date;
   userId: number;
 }
 

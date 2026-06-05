@@ -3,7 +3,7 @@
 </div>
 <mat-sidenav-container>
   <mat-sidenav mode="side" [(opened)]="sideNavToggleState">
-    <app-sidenav-container (addTargetEmitter)="triggerAddTargetModal()" (showConfigEmitter)="showConfig()"></app-sidenav-container>
+    <app-sidenav-container (addTargetEmitter)="triggerAddTargetModal()" (showConfigEmitter)="showConfig()" (saveConfigEmitter)="saveConfig()"></app-sidenav-container>
   </mat-sidenav>
   <mat-sidenav-content class="sideNavContentContainer" (click)="closeSideNav()">
     <mat-grid-list cols="4" rowHeight="100px">
