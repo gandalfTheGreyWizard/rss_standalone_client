@@ -7,6 +7,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { FeedConfig } from '../dtos/rss-parser-dtos';
 import { RssParser } from '../helpers/rss-parser';
+import { GenericInterface } from '../dtos/rss-parser-dtos';
+import { PlaygroundContent } from '../components/playground-content/playground-content';
 
 @Component({
   selector: 'app-playground',
@@ -16,6 +18,7 @@ import { RssParser } from '../helpers/rss-parser';
     MatListModule,
     ModalContainer,
     MatDialogModule,
+    PlaygroundContent
   ],
   templateUrl: './playground.html',
   styleUrl: './playground.scss',
@@ -26,6 +29,7 @@ export class Playground {
   sideNavToggleState: boolean = false;
   topNavIcon = 'menu';
   dialog = inject(MatDialog);
+  tempPlaygroundContent: GenericInterface = {};
 
   async openSideNav() {
     this.sideNavToggleState = true;
@@ -55,9 +59,10 @@ export class Playground {
       exitAnimationDuration: 300,
     }).afterOpened().subscribe(() => {
       this.dialog.getDialogById('addTargetsInPlayground')?.afterClosed().subscribe(async (data: FeedConfig) => {
-        const responseFromRssUrl = await this._rssParser.testParser(data.feedUrl);
+        const responseFromRssUrl: GenericInterface[] = await this._rssParser.testParser(data.feedUrl);
         console.log(responseFromRssUrl);
-      })
+        this.tempPlaygroundContent = responseFromRssUrl[0];
+      });
     })
   }
 }
