@@ -1,6 +1,4 @@
-<div class="topNavContainer">
-  <mat-icon [fontIcon]="topNavIcon" (click)="toggleSideNav()"></mat-icon>
-</div>
+<mat-icon [fontIcon]="topNavIcon" (click)="toggleSideNav()"></mat-icon>
 <mat-sidenav-container class="sideNavContainer">
   <mat-sidenav [(opened)]="sideNavToggleState" (closedStart)="closeSideNav()" (openedStart)="openSideNav">
     <mat-nav-list >

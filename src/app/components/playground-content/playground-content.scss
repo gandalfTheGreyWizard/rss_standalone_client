@@ -1,0 +1,10 @@
+@use '../../styles/forms' as forms;
+
+.playgroundFormTile {
+  width: 100%;
+  overflow-y: hidden;
+  padding: 20px;
+}
+.playgroundFormTile:hover {
+  overflow-y: scroll;
+}

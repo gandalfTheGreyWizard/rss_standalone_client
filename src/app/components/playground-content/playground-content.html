@@ -1,1 +1,11 @@
-<textarea id="" name="" cols="30" rows="10">{{playgroundObject}}</textarea>
+<mat-grid-list cols="2" rowHeight="100px">
+  <mat-grid-tile [colspan]="1" [rowspan]="6" class="playgroundFormTile">
+    <form (ngSubmit)="onSubmit()" [formGroup]="playgroundContentForm" >
+      @for (field of fields; track field) {
+          <app-dynamic-form-component [field]="field" [form]="playgroundContentForm" />
+      }
+
+        <button type="submit" class="formBtn">Save</button>
+    </form>
+  </mat-grid-tile>
+</mat-grid-list>

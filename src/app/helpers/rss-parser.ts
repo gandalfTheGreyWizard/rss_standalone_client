@@ -61,7 +61,6 @@ export class RssParser {
         // new section of parser
         const tempFeedObject: GenericInterface = {};
         Object.keys(eachItem).forEach((eachKey) => {
-          console.log('key is', eachKey);
           tempFeedObject[eachKey] = eachItem[eachKey];
         });
         transformedFeeds.push(tempFeedObject);

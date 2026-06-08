@@ -1,0 +1,17 @@
+<div [formGroup]="form()" class="formContainer">
+@switch (field().controlType) {
+  @case ('textbox') {
+      <mat-form-field class="formFields">
+        <mat-label [attr.for]="field().key">{{ field().label }}</mat-label>
+        <input matInput [formControlName]="field().key" [id]="field().key" [type]="field().type"/>
+      </mat-form-field>
+  }
+  @case ('dropdown') {
+    <select [id]="field().key" [formControlName]="field().key">
+      @for (opt of field().options; track opt) {
+        <option [value]="opt.key">{{ opt.value }}</option>
+      }
+    </select>
+  }
+}
+</div>
